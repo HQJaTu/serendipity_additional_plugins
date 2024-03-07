@@ -680,7 +680,7 @@ class serendipity_event_userprofiles extends serendipity_event {
             return false;
         }
 
-        if ($db_commentcount === null) {
+        if ($db_commentcount === null && isset($eventData['entry_id'])) {
             $dbc = serendipity_db_query("SELECT count(c.id) AS counter, c.author
                                     FROM {$serendipity['dbPrefix']}comments AS c
                                    WHERE c.entry_id = " . (int)$eventData['entry_id'] . "
@@ -693,7 +693,10 @@ class serendipity_event_userprofiles extends serendipity_event {
             }
         }
 
-        $c = $db_commentcount[$eventData['author']];
+        if (isset($eventData['author']) && isset($db_commentcount[$eventData['author']]))
+            $c = $db_commentcount[$eventData['author']];
+        else
+            $c = null;
         $html_commentcount = '<div class="serendipity_commentcount">';
         if ($c == 1) {
             $html_commentcount .= COMMENT . ' (1)';
